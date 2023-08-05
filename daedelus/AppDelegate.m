@@ -1,32 +1,15 @@
-//
-//  AppDelegate.m
-//  daedelus
-//
-//  Created by Dávid Szakállas on 2023. 07. 23..
-//
-
 #import "AppDelegate.h"
 
 @interface AppDelegate ()
-
 
 @end
 
 @implementation AppDelegate
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
-}
 
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
-}
-
-
-- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app {
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed:(NSApplication*) sender
+{
     return YES;
 }
-
 
 @end

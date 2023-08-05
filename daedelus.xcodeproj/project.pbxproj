@@ -7,14 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		86EF0CC32A6DD4A3008433BD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CC22A6DD4A3008433BD /* AppDelegate.m */; };
-		86EF0CC62A6DD4A3008433BD /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CC52A6DD4A3008433BD /* ViewController.m */; };
+		86486F262AAD2BE2007E9569 /* Renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 86486F252AAD2BE2007E9569 /* Renderer.cc */; };
+		86486F2E2AADD78E007E9569 /* Input.cc in Sources */ = {isa = PBXBuildFile; fileRef = 86486F2C2AADD78E007E9569 /* Input.cc */; };
+		86486F392AAE2A8D007E9569 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 86486F382AAE2A8D007E9569 /* LICENSE */; };
+		864BDE432A767950005A3A3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 864BDE422A767950005A3A3E /* Foundation.framework */; };
+		864BDE452A767959005A3A3E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 864BDE442A767959005A3A3E /* QuartzCore.framework */; };
+		864BDE572A76AAC8005A3A3E /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 864BDE562A76AAC8005A3A3E /* Shaders.metal */; };
+		864BDE5C2A76C09E005A3A3E /* Scene.cc in Sources */ = {isa = PBXBuildFile; fileRef = 864BDE5B2A76C09E005A3A3E /* Scene.cc */; };
+		864F65272A77052F0071274B /* NativeRenderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 864F65262A77052F0071274B /* NativeRenderer.cc */; };
+		86EF0CC62A6DD4A3008433BD /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CC52A6DD4A3008433BD /* ViewController.mm */; };
 		86EF0CC82A6DD4A4008433BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86EF0CC72A6DD4A4008433BD /* Assets.xcassets */; };
 		86EF0CCB2A6DD4A4008433BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 86EF0CC92A6DD4A4008433BD /* Main.storyboard */; };
 		86EF0CCD2A6DD4A4008433BD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CCC2A6DD4A4008433BD /* main.m */; };
 		86EF0CD82A6DD4A4008433BD /* daedelusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CD72A6DD4A4008433BD /* daedelusTests.m */; };
 		86EF0CE22A6DD4A4008433BD /* daedelusUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CE12A6DD4A4008433BD /* daedelusUITests.m */; };
 		86EF0CE42A6DD4A4008433BD /* daedelusUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CE32A6DD4A4008433BD /* daedelusUITestsLaunchTests.m */; };
+		86EF0CFA2A757CBD008433BD /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86EF0CF92A757CBD008433BD /* Metal.framework */; };
+		86EF0CFC2A757CC4008433BD /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86EF0CFB2A757CC4008433BD /* MetalKit.framework */; };
+		86EF0CFF2A757EB9008433BD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CFE2A757EB9008433BD /* AppDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,11 +45,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		86486F252AAD2BE2007E9569 /* Renderer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cc; sourceTree = "<group>"; };
+		86486F282AAD312B007E9569 /* Scene.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Scene.hh; sourceTree = "<group>"; };
+		86486F2C2AADD78E007E9569 /* Input.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cc; sourceTree = "<group>"; };
+		86486F2D2AADD78E007E9569 /* Input.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Input.hh; sourceTree = "<group>"; };
+		86486F332AAE2485007E9569 /* metal-cpp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "metal-cpp"; sourceTree = "<group>"; };
+		86486F352AAE24A5007E9569 /* metal-cpp-extensions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "metal-cpp-extensions"; sourceTree = "<group>"; };
+		86486F372AAE26F8007E9569 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		86486F382AAE2A8D007E9569 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		864BDE422A767950005A3A3E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		864BDE442A767959005A3A3E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		864BDE562A76AAC8005A3A3E /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		864BDE5B2A76C09E005A3A3E /* Scene.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cc; sourceTree = "<group>"; };
+		864F65252A7703C50071274B /* NativeRenderer.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NativeRenderer.hh; sourceTree = "<group>"; };
+		864F65262A77052F0071274B /* NativeRenderer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NativeRenderer.cc; sourceTree = "<group>"; };
+		864F652C2A7830120071274B /* AppKitExt.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AppKitExt.hh; sourceTree = "<group>"; };
 		86EF0CBE2A6DD4A3008433BD /* daedelus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = daedelus.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		86EF0CC12A6DD4A3008433BD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		86EF0CC22A6DD4A3008433BD /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		86EF0CC42A6DD4A3008433BD /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		86EF0CC52A6DD4A3008433BD /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		86EF0CC52A6DD4A3008433BD /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		86EF0CC72A6DD4A4008433BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		86EF0CCA2A6DD4A4008433BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		86EF0CCC2A6DD4A4008433BD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -49,6 +72,11 @@
 		86EF0CDD2A6DD4A4008433BD /* daedelusUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = daedelusUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		86EF0CE12A6DD4A4008433BD /* daedelusUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = daedelusUITests.m; sourceTree = "<group>"; };
 		86EF0CE32A6DD4A4008433BD /* daedelusUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = daedelusUITestsLaunchTests.m; sourceTree = "<group>"; };
+		86EF0CF92A757CBD008433BD /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		86EF0CFB2A757CC4008433BD /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		86EF0CFD2A757E90008433BD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		86EF0CFE2A757EB9008433BD /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		86EF0D012A759C67008433BD /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +84,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				864BDE452A767959005A3A3E /* QuartzCore.framework in Frameworks */,
+				864BDE432A767950005A3A3E /* Foundation.framework in Frameworks */,
+				86EF0CFA2A757CBD008433BD /* Metal.framework in Frameworks */,
+				86EF0CFC2A757CC4008433BD /* MetalKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,13 +108,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		86486F242AAD2B41007E9569 /* S13E01 */ = {
+			isa = PBXGroup;
+			children = (
+				864BDE5B2A76C09E005A3A3E /* Scene.cc */,
+				864BDE562A76AAC8005A3A3E /* Shaders.metal */,
+				86486F252AAD2BE2007E9569 /* Renderer.cc */,
+				86486F282AAD312B007E9569 /* Scene.hh */,
+			);
+			path = S13E01;
+			sourceTree = "<group>";
+		};
+		864BDE582A76C02D005A3A3E /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				86486F242AAD2B41007E9569 /* S13E01 */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		864F652A2A77B1470071274B /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				864F652C2A7830120071274B /* AppKitExt.hh */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
 		86EF0CB52A6DD4A3008433BD = {
 			isa = PBXGroup;
 			children = (
+				86486F372AAE26F8007E9569 /* README.md */,
+				86486F352AAE24A5007E9569 /* metal-cpp-extensions */,
+				86486F332AAE2485007E9569 /* metal-cpp */,
 				86EF0CC02A6DD4A3008433BD /* daedelus */,
 				86EF0CD62A6DD4A4008433BD /* daedelusTests */,
 				86EF0CE02A6DD4A4008433BD /* daedelusUITests */,
 				86EF0CBF2A6DD4A3008433BD /* Products */,
+				86EF0CF82A757CBD008433BD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,14 +162,17 @@
 		86EF0CC02A6DD4A3008433BD /* daedelus */ = {
 			isa = PBXGroup;
 			children = (
-				86EF0CC12A6DD4A3008433BD /* AppDelegate.h */,
-				86EF0CC22A6DD4A3008433BD /* AppDelegate.m */,
-				86EF0CC42A6DD4A3008433BD /* ViewController.h */,
-				86EF0CC52A6DD4A3008433BD /* ViewController.m */,
+				86486F382AAE2A8D007E9569 /* LICENSE */,
+				864F652A2A77B1470071274B /* Utility */,
+				864BDE582A76C02D005A3A3E /* Scenes */,
+				86EF0CF42A756EB3008433BD /* Engine */,
+				86EF0CF32A756DEE008433BD /* macOS */,
 				86EF0CC72A6DD4A4008433BD /* Assets.xcassets */,
 				86EF0CC92A6DD4A4008433BD /* Main.storyboard */,
 				86EF0CCC2A6DD4A4008433BD /* main.m */,
 				86EF0CCE2A6DD4A4008433BD /* daedelus.entitlements */,
+				86EF0CFD2A757E90008433BD /* AppDelegate.h */,
+				86EF0CFE2A757EB9008433BD /* AppDelegate.m */,
 			);
 			path = daedelus;
 			sourceTree = "<group>";
@@ -126,6 +192,38 @@
 				86EF0CE32A6DD4A4008433BD /* daedelusUITestsLaunchTests.m */,
 			);
 			path = daedelusUITests;
+			sourceTree = "<group>";
+		};
+		86EF0CF32A756DEE008433BD /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				86EF0CC52A6DD4A3008433BD /* ViewController.mm */,
+				86EF0CC42A6DD4A3008433BD /* ViewController.h */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		86EF0CF42A756EB3008433BD /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				86EF0D012A759C67008433BD /* ShaderTypes.h */,
+				864F65252A7703C50071274B /* NativeRenderer.hh */,
+				864F65262A77052F0071274B /* NativeRenderer.cc */,
+				86486F2C2AADD78E007E9569 /* Input.cc */,
+				86486F2D2AADD78E007E9569 /* Input.hh */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		86EF0CF82A757CBD008433BD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				864BDE442A767959005A3A3E /* QuartzCore.framework */,
+				864BDE422A767950005A3A3E /* Foundation.framework */,
+				86EF0CFB2A757CC4008433BD /* MetalKit.framework */,
+				86EF0CF92A757CBD008433BD /* Metal.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,6 +329,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86486F392AAE2A8D007E9569 /* LICENSE in Resources */,
 				86EF0CC82A6DD4A4008433BD /* Assets.xcassets in Resources */,
 				86EF0CCB2A6DD4A4008433BD /* Main.storyboard in Resources */,
 			);
@@ -257,9 +356,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				86EF0CC62A6DD4A3008433BD /* ViewController.m in Sources */,
+				864BDE572A76AAC8005A3A3E /* Shaders.metal in Sources */,
+				86EF0CFF2A757EB9008433BD /* AppDelegate.m in Sources */,
+				86486F2E2AADD78E007E9569 /* Input.cc in Sources */,
+				86EF0CC62A6DD4A3008433BD /* ViewController.mm in Sources */,
 				86EF0CCD2A6DD4A4008433BD /* main.m in Sources */,
-				86EF0CC32A6DD4A3008433BD /* AppDelegate.m in Sources */,
+				86486F262AAD2BE2007E9569 /* Renderer.cc in Sources */,
+				864BDE5C2A76C09E005A3A3E /* Scene.cc in Sources */,
+				864F65272A77052F0071274B /* NativeRenderer.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +532,10 @@
 				DEVELOPMENT_TEAM = 496X8668HV;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"metal-cpp-extensions",
+					"metal-cpp",
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -454,6 +562,10 @@
 				DEVELOPMENT_TEAM = 496X8668HV;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"metal-cpp-extensions",
+					"metal-cpp",
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
