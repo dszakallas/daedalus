@@ -42,8 +42,10 @@ namespace S13E02 {
 namespace Colors {
 constexpr auto black = simd::float3{};
 constexpr auto red = simd::float3{1.0f};
+constexpr auto blue = simd::float3{0,0,1.0f};
+constexpr auto yellow = simd::float3{1.0f,1.0f,0.0f};
 //constexpr auto white = simd::float3{1.0f,1.0f,1.0f};
-//constexpr auto yellow = simd::float3{1.0f,0.8f,0.0f};
+
 } /* namespace colors */
 
 template <size_t N>
@@ -236,24 +238,104 @@ struct TCR {
     }
 };
 
+struct Bezier {
+    static constexpr size_t N = 10;
+    
+    int count;
+    simd::float4 p[N];
+    
+    void addControlPoint(const simd::float4& px) {
+        if(count == N) return;
+ 
+        p[count] = px;
+        count++;
+ 
+        return;
+    }
+    float weight(int i, float t) const {
+        float choose = 1;
+        for(auto j = 1; j <= i; j++) {
+            choose *= (float)(count - j) / j;
+        }
+        return choose * pow(t, i) * pow(1 - t, count - 1 - i);
+    }
+    simd::float4 operator()(float t) const {
+        if(count == 0) {
+            return {};
+        }
+        if(t < 0 || t > 1) {
+            return p[0];
+        }
+        simd::float4 result{};
+        for(int i = 0; i < count; i++) {
+            result += p[i] * weight(i, t);
+        }
+        return result;
+    }
+    void onDraw(MTL::RenderCommandEncoder* enc) {
+        if (count == 0) {
+            return;
+        }
+        constexpr size_t res = 500;
+        std::array<simd::float2, res> vertices{};
+        for (auto i = 0; i < res; ++i) {
+            float t = (float) i / res;
+            auto p = (*this)(t);
+            vertices[i] = p.xy;
+        }
+        drawPrimitive(enc, vertices, Colors::blue, MTL::PrimitiveTypeLineStrip);
+ 
+        //float ct = (float)(glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
+        //float t_n = (ct / dt) - floorf(ct / dt);
+ 
+        //glColor3f(1,0,0);
+ 
+        for(int i = 0; i < count; i++){
+            float w = 1; //weight(i, t_n);
+            drawCircle<20>(enc, 10 * w, p[i].xy, Colors::red);
+        }
+ 
+        //glColor3f(1,1,0);
+ 
+//        float4 r(this->operator()(t_n));
+//        glColor3f(1,1,0);
+//        glBegin(GL_POLYGON);
+//        for(float t = 0; t < 1; t+=0.05f) {
+//            float x = r.a + cosf(2 * t * M_PI);
+//            float y = r.b + sinf(2 * t * M_PI);
+//            glVertex2f(x,y);
+//        }
+//        glEnd();
+    }
+};
+
 TCR tcr;
+Bezier bezier;
+PresentationState state;
+CFTimeInterval startT;
 
 void Scene::onDraw(MTL::RenderCommandEncoder* enc) {
     enc->setVertexBytes(&viewport, sizeof(viewport), VertexInputIndexViewportSize);
     tcr.onDraw(enc);
+    bezier.onDraw(enc);
 }
 
-
 void Scene::onInit(CFTimeInterval t) {
+    startT = CACurrentMediaTime();
+    
     tcr = TCR{};
-    tcr.addControlPoint({ 100, 100 }, 0.0);
-    tcr.addControlPoint({ 100, 200 }, 1.0);
-    tcr.addControlPoint({ 200, 200 }, 4.0);
-    tcr.addControlPoint({ 200, 100 }, 8.0);
-    tcr.addControlPoint({ 300, 100 }, 16.0);
+    bezier = Bezier{};
+    bezier.addControlPoint({ 400, 400 });
+    bezier.addControlPoint({ 400, 500 });
+    bezier.addControlPoint({ 500, 500 });
+    bezier.addControlPoint({ 500, 400 });
+    bezier.addControlPoint({ 500, 300 });
 }
 
 void Scene::onMouseClicked(Engine::Input::ButtonState buttonState, simd::float2 c) {
+    if (buttonState == Engine::Input::ButtonState::Down && state == PresentationState::Edit) {
+        tcr.addControlPoint(simd::float4{c.x, c.y}, CACurrentMediaTime() - startT);
+    }
 }
 
 void Scene::onMouseMoved(simd::float2 c) {

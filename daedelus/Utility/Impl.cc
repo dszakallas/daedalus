@@ -3,4 +3,7 @@
 #define MTK_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
 
-#include "./NativeRenderer.hh"
+#include <AppKit/AppKit.hpp>
+#include <Metal/Metal.hpp>
+#include <MetalKit/MetalKit.hpp>
+#include "AppKitExt.hh"

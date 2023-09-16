@@ -20,6 +20,26 @@ Renderer::Renderer(MTK::View *mtkView, Scene& scene): scene(scene) {
     
     // Load all the shader files with a .metal file extension in the project.
     MTL::Library* library = device->newDefaultLibrary();
+    
+//    NS::String* shaderSource = NSExt::StringWithContentsOfFile(
+//                                                               NSExt::UTF8String("Shaders.metal"),
+//                                                               NS::StringEncoding::UTF8StringEncoding,
+//                                                               &err
+//                                                               );
+//    if ( !shaderSource )
+//    {
+//        __builtin_printf( "%s\n", err->localizedDescription()->utf8String() );
+//        assert( false );
+//    }
+    
+//    MTL::Library* library = device->newLibrary(shaderSource, nullptr, &err);
+//
+    //NSString *shaderSource = [NSString stringWithContentsOfFile:@"path_to_shader.metal" encoding:NSUTF8StringEncoding error:&error];
+    //id<MTLLibrary> library = [device newLibraryWithSource:shaderSource options:nil error:&error];
+//    if (!library) {
+//        NSLog(@"Failed to create library: %@", error);
+//    }
+    
     if ( !library )
     {
         __builtin_printf( "%s", err->localizedDescription()->utf8String() );

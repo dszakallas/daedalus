@@ -99,7 +99,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
         [scenesMenu addItem:menuItem];
     }
     
-    [self initializeSceneWithIndex:0];
+    [self initializeSceneWithIndex:1];
 }
 @end
 
