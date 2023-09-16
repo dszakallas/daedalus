@@ -41,6 +41,37 @@ namespace Scenes {
  */
 namespace S13E01 {
 
+template <size_t N>
+void drawPrimitive(MTL::RenderCommandEncoder* enc,
+                   const std::array<simd::float2, N>& vertices,
+                   const simd::float3& color,
+                   MTL::PrimitiveType primitiveType = MTL::PrimitiveType::PrimitiveTypeTriangleStrip
+                   ) {
+    enc->setVertexBytes(vertices.data(), sizeof(vertices), VertexInputIndexVertices);
+    enc->setVertexBytes(&color, sizeof(color), VertexInputIndexColor);
+    enc->drawPrimitives(primitiveType, NS::UInteger(0), NS::UInteger(vertices.size()));
+}
+
+template <size_t N>
+void drawEllipse(MTL::RenderCommandEncoder* enc,
+                 const simd::float2& p,
+                 const simd::float2& position,
+                 const simd::float3& color
+                 ) {
+    std::array<simd::float2, 2 * N + 1> vertices;
+    const float angleIncrement = 2.0f * M_PI / N;
+    for (auto i = 0; i < N; ++i) {
+        float angle = i * angleIncrement;
+        vertices[2 * i] = {
+            position.x + cosf(angle) * p.x,
+            position.y + sinf(angle) * p.y,
+        };
+        vertices[2 * i + 1] = { position.x, position.y };
+    }
+    vertices[2 * N] = { position.x + p.x, position.y};
+    drawPrimitive(enc, vertices, color);
+}
+
 namespace Colors {
 constexpr auto black = simd::float3{};
 constexpr auto white = simd::float3{1.0f,1.0f,1.0f};
@@ -88,37 +119,6 @@ const std::array<simd::float2, 4> slingshotFrontVertices{{
 }};
 const simd::float2 launchPosition{200, 200};
 const simd::float2 gravity{0.0f,-60.0f};
-
-template <size_t N>
-void drawPrimitive(MTL::RenderCommandEncoder* enc,
-                   const std::array<simd::float2, N>& vertices,
-                   const simd::float3& color,
-                   MTL::PrimitiveType primitiveType = MTL::PrimitiveType::PrimitiveTypeTriangleStrip
-                   ) {
-    enc->setVertexBytes(vertices.data(), sizeof(vertices), VertexInputIndexVertices);
-    enc->setVertexBytes(&color, sizeof(color), VertexInputIndexColor);
-    enc->drawPrimitives(primitiveType, NS::UInteger(0), NS::UInteger(vertices.size()));
-}
-
-template <size_t N>
-void drawEllipse(MTL::RenderCommandEncoder* enc,
-                 const simd::float2& p,
-                 const simd::float2& position,
-                 const simd::float3& color
-                 ) {
-    std::array<simd::float2, 2 * N + 1> vertices;
-    const float angleIncrement = 2.0f * M_PI / N;
-    for (auto i = 0; i < N; ++i) {
-        float angle = i * angleIncrement;
-        vertices[2 * i] = {
-            position.x + cosf(angle) * p.x,
-            position.y + sinf(angle) * p.y,
-        };
-        vertices[2 * i + 1] = { position.x, position.y };
-    }
-    vertices[2 * N] = { position.x + p.x, position.y};
-    drawPrimitive(enc, vertices, color);
-}
 
 enum class State{
     Idle,
@@ -206,11 +206,11 @@ CFTimeInterval launchT;
 Bird target{simd::float2{525,300}, simd::float3{0,0.5f,0}, Facing::Left};
 Bird missile{launchPosition, simd::float3{0.5f,0,0}, Facing::Right};
 
-void onInit(CFTimeInterval t) {
+void Scene::onInit(CFTimeInterval t) {
     startT = t;
 }
 
-void onMouseClicked(Engine::Input::ButtonState buttonState, simd::float2 c) {
+void Scene::onMouseClicked(Engine::Input::ButtonState buttonState, simd::float2 c) {
     if (state == State::Idle && buttonState == Engine::Input::ButtonState::Down && missile.intersect(c)) {
         state = State::Dragging;
         grabOffset = missile.position - c;
@@ -224,13 +224,13 @@ void onMouseClicked(Engine::Input::ButtonState buttonState, simd::float2 c) {
     }
 }
 
-void onMouseMoved(simd::float2 c) {
+void Scene::onMouseMoved(simd::float2 c) {
     if(state == State::Dragging) {
         missile.position = c + grabOffset;
     }
 }
 
-void onIdle(CFTimeInterval endT) {
+void Scene::onIdle(CFTimeInterval endT) {
     auto t = startT;
     for(; t < endT; t += dt) {
         if (state != State::Hit) {
@@ -266,7 +266,7 @@ void onIdle(CFTimeInterval endT) {
     startT = t;
 }
 
-void onDraw(MTL::RenderCommandEncoder* enc) {
+void Scene::onDraw(MTL::RenderCommandEncoder* enc) {
     simd::float2 center(launchPosition);
     if ( state == State::Idle || state == State::Dragging || state == State::Launching ) {
         center=missile.position;
@@ -304,5 +304,10 @@ void onDraw(MTL::RenderCommandEncoder* enc) {
         center + scaleToViewport(simd::float2{-0.1f, 0.04f})
     }, Colors::black, MTL::PrimitiveType::PrimitiveTypeTriangle);
 }
+
+Engine::Renderer* Scene::createRenderer(MTK::View* mtkView) {
+    return new Renderer(mtkView, *this);
+}
+
 } /* namespace S13E01 */
 } /* namespace Scenes */

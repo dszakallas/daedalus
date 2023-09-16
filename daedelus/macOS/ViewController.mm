@@ -4,20 +4,22 @@
 #include "../Engine/NativeRenderer.hh"
 #include "../Engine/Input.hh"
 #include "../Scenes/S13E01/Scene.hh"
+#include "../Scenes/S13E02/Scene.hh"
 
 @implementation ViewController
 {
     MTKView *_view;
-    NativeRenderer *_renderer;
+    int _currentScene;
+    Engine::Renderer *_renderer;
     CFTimeInterval _startTime;
-    
+    Engine::Scene *_scenes[2];
 }
 
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow, const CVTimeStamp *inOutputTime, CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext) {
     // Cast the context back to your view controller
-    //ViewController *viewController = (__bridge ViewController *)displayLinkContext;
+    ViewController *viewController = (__bridge ViewController *)displayLinkContext;
     
-    Scenes::S13E01::onIdle(CACurrentMediaTime());
+    viewController->_scenes[viewController->_currentScene]->onIdle(CACurrentMediaTime());
     
     return kCVReturnSuccess;
 }
@@ -26,7 +28,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 {
     [super viewWillAppear];
     CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
-    Scenes::S13E01::onInit(CACurrentMediaTime());
     CVDisplayLinkSetOutputCallback(_displayLink, &DisplayLinkCallback, (__bridge void *)self);
     CVDisplayLinkStart(_displayLink);
 }
@@ -40,17 +41,41 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 }
 
 - (void)mouseDown:(NSEvent *)event {
-    Scenes::S13E01::onMouseClicked(Engine::Input::ButtonState::Down,
+    _scenes[_currentScene]->onMouseClicked(Engine::Input::ButtonState::Down,
                                    simd::float2{(float)event.locationInWindow.x, (float)event.locationInWindow.y});
 }
 
 - (void)mouseUp:(NSEvent *)event {
-    Scenes::S13E01::onMouseClicked(Engine::Input::ButtonState::Up,
+    _scenes[_currentScene]->onMouseClicked(Engine::Input::ButtonState::Up,
                                    simd::float2{(float)event.locationInWindow.x, (float)event.locationInWindow.y});
 }
 
 - (void)mouseDragged:(NSEvent *)event {
-    Scenes::S13E01::onMouseMoved(simd::float2{(float)event.locationInWindow.x, (float)event.locationInWindow.y});
+    _scenes[_currentScene]->onMouseMoved(simd::float2{(float)event.locationInWindow.x, (float)event.locationInWindow.y});
+}
+
+- (void)sceneSelected:(NSMenuItem *)sender {
+    NSMenu *scenesMenu = [sender menu];
+    NSInteger index = [scenesMenu indexOfItem:sender];
+    NSLog(@"Selected item index: %ld", index);
+    [self initializeSceneWithIndex:(int)index];
+}
+
+- (void)initializeSceneWithIndex:(int)index {
+    auto view = (__bridge MTK::View*)_view;
+    if (_renderer != nullptr) {
+        view->setDelegate(nullptr);
+        _renderer->~Renderer();
+    }
+    _currentScene = index;
+    _scenes[_currentScene]->onInit(CACurrentMediaTime());
+    auto *renderer = _scenes[_currentScene]->createRenderer((__bridge MTK::View*)_view);
+    NSAssert(renderer, @"Renderer failed initialization");
+    _renderer = renderer;
+    
+    // Initialize our renderer with the view size
+    _renderer->drawableSizeWillChange(view, view->drawableSize());
+    view->setDelegate(_renderer);
 }
 
 - (void)viewDidLoad
@@ -60,28 +85,21 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     _view.device = MTLCreateSystemDefaultDevice();
     _view.preferredFramesPerSecond = 30;
     NSAssert(_view.device, @"Metal is not supported on this device");
+        
+    NSMenu *applicationMenu = [[NSApplication sharedApplication] mainMenu];
+    NSMenu *scenesMenu = [[applicationMenu itemWithTitle:@"Scenes"] submenu];
+    
+    _scenes[0] = new Scenes::S13E01::Scene();
+    _scenes[1] = new Scenes::S13E02::Scene();
+    
+    NSArray *options = @[@"S13E01", @"S13E02"];
 
-    __weak ViewController* weakSelf = self;
-    dispatch_async( dispatch_get_global_queue( QOS_CLASS_USER_INITIATED, 0 ), ^(){
-        ViewController* strongSelf;
-        if ( (strongSelf = weakSelf) )
-        {
-            NativeRenderer *renderer = new Scenes::S13E01::Renderer((__bridge MTK::View*)strongSelf->_view);
-            NSAssert(renderer, @"Renderer failed initialization");
-            
-            strongSelf->_renderer = renderer;
-            
-            dispatch_async( dispatch_get_main_queue(), ^(){
-                ViewController* innerStrongSelf;
-                if ( (innerStrongSelf = weakSelf) ) {
-                    // Initialize our renderer with the view size
-                    auto view = (__bridge MTK::View*)innerStrongSelf->_view;
-                    innerStrongSelf->_renderer->drawableSizeWillChange(view, view->drawableSize());
-                    view->setDelegate(innerStrongSelf->_renderer);
-                }
-            } );
-        }
-    } );
+    for (NSString *option in options) {
+        NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:option action:@selector(sceneSelected:) keyEquivalent:@""];
+        [scenesMenu addItem:menuItem];
+    }
+    
+    [self initializeSceneWithIndex:0];
 }
 @end
 

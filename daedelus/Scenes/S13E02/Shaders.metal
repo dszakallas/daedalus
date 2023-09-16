@@ -6,7 +6,7 @@
 using namespace metal;
 
 namespace Scenes {
-    namespace S12E01 {
+    namespace S13E02 {
         
         // Vertex shader outputs and fragment shader inputs
         struct RasterizerData
@@ -57,5 +57,5 @@ namespace Scenes {
             // Return the interpolated color.
             return in.color;
         }
-    } /* namespace S13E01 */
+    } /* namespace S13E02 */
 } /* namespace Scenes */

@@ -7,7 +7,7 @@
 #include "../../Engine/Input.hh"
 
 namespace Scenes {
-namespace S13E01 {
+namespace S13E02 {
 
 struct Scene : public Engine::Scene {
     Engine::Renderer* createRenderer(MTK::View *mtkView) override;
@@ -33,5 +33,5 @@ private:
     Scene& scene;
 };
 
-} /* namespace S13E01 */
+} /* namespace S13E02 */
 } /* namespace Scenes */

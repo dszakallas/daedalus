@@ -8,13 +8,13 @@
 #include "./Scene.hh"
 
 namespace Scenes {
-namespace S13E01 {
+namespace S13E02 {
 
 Renderer::Renderer(MTK::View *mtkView, Scene& scene): scene(scene) {
     NS::Error* err = nullptr;
     
     mtkView->setColorPixelFormat( MTL::PixelFormat::PixelFormatBGRA8Unorm_sRGB );
-    mtkView->setClearColor( MTL::ClearColor::Make( 0.1, 0.1, 0.1, 1.0 ) );
+    mtkView->setClearColor( MTL::ClearColor::Make( 1.0, 1.0, 1.0, 1.0 ) );
     
     device = mtkView->device()->retain();
     
@@ -26,8 +26,8 @@ Renderer::Renderer(MTK::View *mtkView, Scene& scene): scene(scene) {
         assert( false );
     }
     
-    MTL::Function* vertexShader = library->newFunction(NSExt::UTF8String("Scenes::S12E01::vertexShader"));
-    MTL::Function* fragmentShader = library->newFunction(NSExt::UTF8String("Scenes::S12E01::fragmentShader"));
+    MTL::Function* vertexShader = library->newFunction(NSExt::UTF8String("Scenes::S13E02::vertexShader"));
+    MTL::Function* fragmentShader = library->newFunction(NSExt::UTF8String("Scenes::S13E02::fragmentShader"));
     
     MTL::RenderPipelineDescriptor* desc = MTL::RenderPipelineDescriptor::alloc()->init();
     
@@ -88,5 +88,5 @@ void Renderer::drawableSizeWillChange(MTK::View* view, CGSize size) {
     viewport.y = size.height;
 }
 
-} /* namespace S13E01 */
+} /* namespace S13E02 */
 } /* namespace Scenes */

@@ -15,6 +15,9 @@
 		864BDE572A76AAC8005A3A3E /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 864BDE562A76AAC8005A3A3E /* Shaders.metal */; };
 		864BDE5C2A76C09E005A3A3E /* Scene.cc in Sources */ = {isa = PBXBuildFile; fileRef = 864BDE5B2A76C09E005A3A3E /* Scene.cc */; };
 		864F65272A77052F0071274B /* NativeRenderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 864F65262A77052F0071274B /* NativeRenderer.cc */; };
+		867F8BC22AB5986700417059 /* Scene.cc in Sources */ = {isa = PBXBuildFile; fileRef = 867F8BC02AB5986700417059 /* Scene.cc */; };
+		867F8BC42AB5C78700417059 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 867F8BC32AB5C78700417059 /* Shaders.metal */; };
+		867F8BC82AB5CC3900417059 /* Renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 867F8BC62AB5CC3900417059 /* Renderer.cc */; };
 		86EF0CC62A6DD4A3008433BD /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CC52A6DD4A3008433BD /* ViewController.mm */; };
 		86EF0CC82A6DD4A4008433BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86EF0CC72A6DD4A4008433BD /* Assets.xcassets */; };
 		86EF0CCB2A6DD4A4008433BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 86EF0CC92A6DD4A4008433BD /* Main.storyboard */; };
@@ -60,6 +63,10 @@
 		864F65252A7703C50071274B /* NativeRenderer.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NativeRenderer.hh; sourceTree = "<group>"; };
 		864F65262A77052F0071274B /* NativeRenderer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NativeRenderer.cc; sourceTree = "<group>"; };
 		864F652C2A7830120071274B /* AppKitExt.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AppKitExt.hh; sourceTree = "<group>"; };
+		867F8BC02AB5986700417059 /* Scene.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cc; sourceTree = "<group>"; };
+		867F8BC12AB5986700417059 /* Scene.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Scene.hh; sourceTree = "<group>"; };
+		867F8BC32AB5C78700417059 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		867F8BC62AB5CC3900417059 /* Renderer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cc; sourceTree = "<group>"; };
 		86EF0CBE2A6DD4A3008433BD /* daedelus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = daedelus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86EF0CC42A6DD4A3008433BD /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		86EF0CC52A6DD4A3008433BD /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
@@ -122,6 +129,7 @@
 		864BDE582A76C02D005A3A3E /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				867F8BBF2AB5965800417059 /* S13E02 */,
 				86486F242AAD2B41007E9569 /* S13E01 */,
 			);
 			path = Scenes;
@@ -133,6 +141,17 @@
 				864F652C2A7830120071274B /* AppKitExt.hh */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		867F8BBF2AB5965800417059 /* S13E02 */ = {
+			isa = PBXGroup;
+			children = (
+				867F8BC02AB5986700417059 /* Scene.cc */,
+				867F8BC12AB5986700417059 /* Scene.hh */,
+				867F8BC32AB5C78700417059 /* Shaders.metal */,
+				867F8BC62AB5CC3900417059 /* Renderer.cc */,
+			);
+			path = S13E02;
 			sourceTree = "<group>";
 		};
 		86EF0CB52A6DD4A3008433BD = {
@@ -360,8 +379,11 @@
 				86EF0CFF2A757EB9008433BD /* AppDelegate.m in Sources */,
 				86486F2E2AADD78E007E9569 /* Input.cc in Sources */,
 				86EF0CC62A6DD4A3008433BD /* ViewController.mm in Sources */,
+				867F8BC82AB5CC3900417059 /* Renderer.cc in Sources */,
+				867F8BC42AB5C78700417059 /* Shaders.metal in Sources */,
 				86EF0CCD2A6DD4A4008433BD /* main.m in Sources */,
 				86486F262AAD2BE2007E9569 /* Renderer.cc in Sources */,
+				867F8BC22AB5986700417059 /* Scene.cc in Sources */,
 				864BDE5C2A76C09E005A3A3E /* Scene.cc in Sources */,
 				864F65272A77052F0071274B /* NativeRenderer.cc in Sources */,
 			);
