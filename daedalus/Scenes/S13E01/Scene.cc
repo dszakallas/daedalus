@@ -5,10 +5,8 @@
 
 #include "../../Utility/AppKitExt.hh"
 
-#include "../../Engine/ShaderTypes.h"
-#include "../../Engine/Engine.hh"
-#include "../../Engine/Input.hh"
-#include "./Scene.hh"
+#include "Scene.hh"
+#include "ShaderTypes.hh"
 
 namespace Scenes {
 /*
@@ -47,8 +45,8 @@ void drawPrimitive(MTL::RenderCommandEncoder* enc,
                    const simd::float3& color,
                    MTL::PrimitiveType primitiveType = MTL::PrimitiveType::PrimitiveTypeTriangleStrip
                    ) {
-    enc->setVertexBytes(vertices.data(), sizeof(vertices), VertexInputIndexVertices);
-    enc->setVertexBytes(&color, sizeof(color), VertexInputIndexColor);
+    enc->setVertexBytes(vertices.data(), sizeof(vertices), (NS::UInteger)VertexInputIndex::Vertices);
+    enc->setVertexBytes(&color, sizeof(color), (NS::UInteger)VertexInputIndex::Color);
     enc->drawPrimitives(primitiveType, NS::UInteger(0), NS::UInteger(vertices.size()));
 }
 
@@ -287,7 +285,7 @@ void Scene::onDraw(MTL::RenderCommandEncoder* enc) {
         center=missile.position;
     }
     
-    enc->setVertexBytes(&viewport, sizeof(viewport), VertexInputIndexViewportSize);
+    enc->setVertexBytes(&viewport, sizeof(viewport), (NS::UInteger)VertexInputIndex::ViewportSize);
     
     drawPrimitive(enc, skyVertices, skyColor);
     drawPrimitive(enc, grassVertices, grassColor);

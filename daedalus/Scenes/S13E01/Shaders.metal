@@ -1,12 +1,10 @@
 #include <metal_stdlib>
-
-// Include header shared between this Metal shader code and C code executing Metal API commands.
-#include "../../Engine/ShaderTypes.h"
+#include "ShaderTypes.hh"
 
 using namespace metal;
 
 namespace Scenes {
-    namespace S12E01 {
+    namespace S13E01 {
         
         // Vertex shader outputs and fragment shader inputs
         struct RasterizerData
@@ -25,9 +23,9 @@ namespace Scenes {
         
         vertex RasterizerData
         vertexShader(uint vertexID [[vertex_id]],
-                     constant vector_float2 *vertices [[buffer(VertexInputIndexVertices)]],
-                     constant vector_float2 *viewportSizePointer [[buffer(VertexInputIndexViewportSize)]],
-                     constant vector_float3 *color [[buffer(VertexInputIndexColor)]])
+                     constant vector_float2 *vertices [[buffer(VertexInputIndex::Vertices)]],
+                     constant vector_float2 *viewportSize [[buffer(VertexInputIndex::ViewportSize)]],
+                     constant vector_float3 *color [[buffer(VertexInputIndex::Color)]])
         {
             RasterizerData out;
             
@@ -37,7 +35,7 @@ namespace Scenes {
             float2 pixelSpacePosition = vertices[vertexID].xy;
             
             // Halve the viewport size
-            vector_float2 halfViewportSize = *viewportSizePointer / 2.0;
+            vector_float2 halfViewportSize = *viewportSize / 2.0;
             
             // To convert from positions in pixel space to positions in clip-space,
             //  divide the pixel coordinates by half the size of the viewport.

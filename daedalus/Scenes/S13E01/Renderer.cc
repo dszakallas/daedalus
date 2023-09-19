@@ -3,7 +3,6 @@
 #include <simd/simd.h>
 
 #include "../../Engine/Engine.hh"
-#include "../../Engine/ShaderTypes.h"
 
 #include "./Scene.hh"
 
@@ -26,8 +25,8 @@ Renderer::Renderer(MTK::View *mtkView, Scene& scene): scene(scene) {
         assert( false );
     }
     
-    MTL::Function* vertexShader = library->newFunction(NSExt::UTF8String("Scenes::S12E01::vertexShader"));
-    MTL::Function* fragmentShader = library->newFunction(NSExt::UTF8String("Scenes::S12E01::fragmentShader"));
+    MTL::Function* vertexShader = library->newFunction(NSExt::UTF8String("Scenes::S13E01::vertexShader"));
+    MTL::Function* fragmentShader = library->newFunction(NSExt::UTF8String("Scenes::S13E01::fragmentShader"));
     
     MTL::RenderPipelineDescriptor* desc = MTL::RenderPipelineDescriptor::alloc()->init();
     

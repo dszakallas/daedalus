@@ -1,8 +1,7 @@
 #include <simd/simd.h>
 
 #include "Scene.hh"
-
-#include "../../Engine/ShaderTypes.h"
+#include "ShaderTypes.hh"
 
 namespace Scenes {
 
@@ -17,7 +16,7 @@ namespace S13E02 {
  10 control points). The program will fit a white Tensioned Catmull-Rom (TCR) spline to the
  control points, with a tension of -0.5. The control points will be represented by red filled
  circles with a radius of 1m in their resting state.
-
+ 
  Pressing the space key will activate the program, duplicating the spline and rotating the new
  version by 60 degrees around the centroid of the control points (which can be calculated as the
  arithmetic mean of the control point coordinates). The program will then create a blue Bezier
@@ -32,7 +31,7 @@ namespace S13E02 {
  with these weights (for Bezier, think about the Bernstein polynomial; for TCR, some additional
  thinking may be required). If the weight is positive, the circle will be red. If it is negative,
  it will be turquoise blue.
-
+ 
  Note: Only approximately C2 continuous and exactly C1 continuous real, non-uniform TCR splines
  are acceptable. For example, Catmull-Rom splines and Kochanek-Bartels splines that include
  unnecessary elements are not allowed. To put it more simply, splines copied from the Internet
@@ -54,8 +53,8 @@ void drawPrimitive(MTL::RenderCommandEncoder* enc,
                    const simd::float3& color,
                    MTL::PrimitiveType primitiveType = MTL::PrimitiveType::PrimitiveTypeTriangleStrip
                    ) {
-    enc->setVertexBytes(vertices.data(), sizeof(vertices), VertexInputIndexVertices);
-    enc->setVertexBytes(&color, sizeof(color), VertexInputIndexColor);
+    enc->setVertexBytes(vertices.data(), sizeof(vertices), (NS::UInteger)VertexInputIndex::Vertices);
+    enc->setVertexBytes(&color, sizeof(color), (NS::UInteger)VertexInputIndex::Color);
     enc->drawPrimitives(primitiveType, NS::UInteger(0), NS::UInteger(vertices.size()));
 }
 
@@ -81,14 +80,12 @@ void drawEllipse(MTL::RenderCommandEncoder* enc,
 
 template <size_t N>
 void drawCircle(MTL::RenderCommandEncoder* enc,
-                 float p,
-                 const simd::float2& position,
-                 const simd::float3& color
-                 ) {
+                float p,
+                const simd::float2& position,
+                const simd::float3& color
+                ) {
     drawEllipse<N>(enc, simd::float2{p, p}, position, color);
 }
-
-const simd::float2 viewport{600, 600};
 
 enum class PresentationState {
     Edit,
@@ -97,17 +94,17 @@ enum class PresentationState {
 
 struct TCR {
     static constexpr simd::float4 tcr(
-                       std::array<simd::float4, 2> p,
-                       std::array<simd::float4, 2> v,
-                       std::array<float, 2> t,
-                       float tx
-                       ) {
+                                      std::array<simd::float4, 2> p,
+                                      std::array<simd::float4, 2> v,
+                                      std::array<float, 2> t,
+                                      float tx
+                                      ) {
         const auto a0 = p[0];
         const auto a1 = v[0];
- 
+        
         const float tau = t[1] - t[0];
         const simd::float4 eps = p[1] - p[0];
- 
+        
         const simd::float4 a2 = (eps * 3.0f) / (tau * tau) - (v[1] + v[0] * 2.0f) / tau;
         const simd::float4 a3 = (eps * -2.0f) / (tau * tau * tau) + (v[1] + v[0]) / (tau * tau);
         
@@ -122,7 +119,7 @@ struct TCR {
     simd::float4 p[N];
     simd::float4 v[N];
     PresentationState state;
-
+    
     int index(float t) const {
         for(int i = 0; i < count; i++) {
             if(this->t[i] > t) return i-1;
@@ -132,14 +129,14 @@ struct TCR {
     
     void addControlPoint(const simd::float4& px, float tx) {
         if(count == N) return;
- 
+        
         p[count] = px;
         t[count] = tx;
         count++;
         if(count > 2) {
             v[count-2] = velocity(count-2);
         }
- 
+        
         return;
     }
     
@@ -155,7 +152,7 @@ struct TCR {
         
         return v * ((1.0f - tension) / 2.0f);
     }
- 
+    
     simd::float4 weight(float tx) {
         if (count == 0) {
             return {};
@@ -171,11 +168,11 @@ struct TCR {
         if (count == 1 || tx <= t[0]) {
             return p_[1];
         }
-
+        
         if (tx >= t[count-1]) {
             return p_[2];
         }
- 
+        
         int i = index(tx);
         
         auto v_ = std::array<simd::float4, 2>{};
@@ -201,7 +198,7 @@ struct TCR {
         if (count == 1 || tx <= t[0]) {
             return p[0];
         }
-
+        
         if (tx >= t[count-1]) {
             return p[count-1];
         }
@@ -246,10 +243,10 @@ struct Bezier {
     
     void addControlPoint(const simd::float4& px) {
         if(count == N) return;
- 
+        
         p[count] = px;
         count++;
- 
+        
         return;
     }
     float weight(int i, float t) const {
@@ -284,64 +281,98 @@ struct Bezier {
             vertices[i] = p.xy;
         }
         drawPrimitive(enc, vertices, Colors::blue, MTL::PrimitiveTypeLineStrip);
- 
+        
         //float ct = (float)(glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
         //float t_n = (ct / dt) - floorf(ct / dt);
- 
+        
         //glColor3f(1,0,0);
- 
+        
         for(int i = 0; i < count; i++){
             float w = 1; //weight(i, t_n);
-            drawCircle<20>(enc, 10 * w, p[i].xy, Colors::red);
+            drawCircle<20>(enc, 1 * w, p[i].xy, Colors::red);
         }
- 
+        
         //glColor3f(1,1,0);
- 
-//        float4 r(this->operator()(t_n));
-//        glColor3f(1,1,0);
-//        glBegin(GL_POLYGON);
-//        for(float t = 0; t < 1; t+=0.05f) {
-//            float x = r.a + cosf(2 * t * M_PI);
-//            float y = r.b + sinf(2 * t * M_PI);
-//            glVertex2f(x,y);
-//        }
-//        glEnd();
+        
+        //        float4 r(this->operator()(t_n));
+        //        glColor3f(1,1,0);
+        //        glBegin(GL_POLYGON);
+        //        for(float t = 0; t < 1; t+=0.05f) {
+        //            float x = r.a + cosf(2 * t * M_PI);
+        //            float y = r.b + sinf(2 * t * M_PI);
+        //            glVertex2f(x,y);
+        //        }
+        //        glEnd();
     }
 };
+
+const simd::float2 viewport{600, 600};
+const simd::float4x4 clip = simd_float4x4{{
+    {0.02, 0, 0, 0},
+    {0, 0.02, 0, 0},
+    {0, 0, 1.0, 0},
+    {-1, -1, 0, 1.0}
+}};
+const simd::float4x4 defaultCam = simd_float4x4{{
+    {2, 0, 0, 0},
+    {0, 2, 0, 0},
+    {0, 0, 1.0, 0},
+    {0, 0, 0, 1.0}
+}};
 
 TCR tcr;
 Bezier bezier;
 PresentationState state;
 CFTimeInterval startT;
+simd::float4x4 cam;
+
+void animate() {
+    
+}
+
+void moveCamera() {
+    auto tr = matrix_identity_float4x4;
+    tr.columns[3] = simd::float4{-10, -20, 0, 1};
+    cam = cam * tr;
+    
+    if (cam.columns[3].x < -100 || cam.columns[3].y < -100) {
+        cam = defaultCam;
+    }
+}
 
 void Scene::onDraw(MTL::RenderCommandEncoder* enc) {
-    enc->setVertexBytes(&viewport, sizeof(viewport), VertexInputIndexViewportSize);
+    enc->setVertexBytes(&cam, sizeof(cam), (NS::UInteger)VertexInputIndex::Cam);
+    enc->setVertexBytes(&clip, sizeof(clip), (NS::UInteger)VertexInputIndex::Clip);
     tcr.onDraw(enc);
     bezier.onDraw(enc);
 }
 
 void Scene::onInit(CFTimeInterval t) {
     startT = CACurrentMediaTime();
-    
     tcr = TCR{};
     bezier = Bezier{};
-    bezier.addControlPoint({ 400, 400 });
-    bezier.addControlPoint({ 400, 500 });
-    bezier.addControlPoint({ 500, 500 });
-    bezier.addControlPoint({ 500, 400 });
-    bezier.addControlPoint({ 500, 300 });
+    bezier.addControlPoint({ 10, 10 });
+    bezier.addControlPoint({ 10, 20 });
+    bezier.addControlPoint({ 20, 20 });
+    bezier.addControlPoint({ 10, 30 });
+    bezier.addControlPoint({ 20, 30 });
+    cam = defaultCam;
 }
 
 void Scene::onMouseClicked(Engine::Input::MouseButton button, Engine::Input::ButtonState buttonState, simd::float2 c) {
-    if (button == Engine::Input::MouseButton::Left && buttonState == Engine::Input::ButtonState::Down && state == PresentationState::Edit) {
+    if (button == Engine::Input::MouseButton::Left && buttonState == Engine::Input::ButtonState::Down &&
+        state == PresentationState::Edit) {
         tcr.addControlPoint(simd::float4{c.x, c.y}, CACurrentMediaTime() - startT);
     }
 }
 
 bool Scene::onKey(Engine::Input::KeyboardButton button, Engine::Input::ButtonState state) {
-    __builtin_printf( "Received key %hu",  button );
     if (button == Engine::Input::KeyboardButton::SPACEBAR) {
-        __builtin_printf( "Key handled" );
+        animate();
+        return true;
+    }
+    if (button == Engine::Input::KeyboardButton::S) {
+        moveCamera();
         return true;
     }
     return false;

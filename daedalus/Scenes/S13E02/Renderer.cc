@@ -3,7 +3,6 @@
 #include <simd/simd.h>
 
 #include "../../Engine/Engine.hh"
-#include "../../Engine/ShaderTypes.h"
 
 #include "./Scene.hh"
 

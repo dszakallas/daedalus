@@ -1,7 +1,6 @@
 #include <metal_stdlib>
 
-// Include header shared between this Metal shader code and C code executing Metal API commands.
-#include "../../Engine/ShaderTypes.h"
+#include "ShaderTypes.hh"
 
 using namespace metal;
 
@@ -25,24 +24,16 @@ namespace Scenes {
         
         vertex RasterizerData
         vertexShader(uint vertexID [[vertex_id]],
-                     constant vector_float2 *vertices [[buffer(VertexInputIndexVertices)]],
-                     constant vector_float2 *viewportSizePointer [[buffer(VertexInputIndexViewportSize)]],
-                     constant vector_float3 *color [[buffer(VertexInputIndexColor)]])
+                     constant vector_float2 *vertices [[buffer(VertexInputIndex::Vertices)]],
+                     constant float4x4 *cam [[buffer(VertexInputIndex::Cam)]],
+                     constant float4x4 *clip [[buffer(VertexInputIndex::Clip)]],
+                     constant vector_float3 *color [[buffer(VertexInputIndex::Color)]])
         {
             RasterizerData out;
             
-            // Index into the array of positions to get the current vertex.
-            // The positions are specified in pixel dimensions (i.e. a value of 100
-            // is 100 pixels from the origin).
-            float2 pixelSpacePosition = vertices[vertexID].xy;
-            
-            // Halve the viewport size
-            vector_float2 halfViewportSize = *viewportSizePointer / 2.0;
-            
-            // To convert from positions in pixel space to positions in clip-space,
-            //  divide the pixel coordinates by half the size of the viewport.
-            out.position = vector_float4(0.0, 0.0, 0.0, 1.0);
-            out.position.xy = (pixelSpacePosition - halfViewportSize) / halfViewportSize;
+
+            float4 obj = float4(vertices[vertexID].xy, 0, 1);
+            out.position = (*clip * *cam) * obj;
             out.position.z = 0.0;
             
             // Pass the input color directly to the rasterizer.

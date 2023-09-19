@@ -65,6 +65,8 @@
 		867F8BC62AB5CC3900417059 /* Renderer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cc; sourceTree = "<group>"; };
 		867F8BC92AB6417000417059 /* Impl.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Impl.cc; sourceTree = "<group>"; };
 		867F8BCC2AB780DC00417059 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		867F8BCD2ABA48CD00417059 /* ShaderTypes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ShaderTypes.hh; sourceTree = "<group>"; };
+		867F8BCE2ABA4AFA00417059 /* ShaderTypes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ShaderTypes.hh; sourceTree = "<group>"; };
 		86EF0CBE2A6DD4A3008433BD /* daedalus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = daedalus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86EF0CC72A6DD4A4008433BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		86EF0CCA2A6DD4A4008433BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -78,7 +80,6 @@
 		86EF0CF92A757CBD008433BD /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		86EF0CFB2A757CC4008433BD /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		86EF0CFE2A757EB9008433BD /* App.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = App.mm; sourceTree = "<group>"; };
-		86EF0D012A759C67008433BD /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +118,7 @@
 				864BDE562A76AAC8005A3A3E /* Shaders.metal */,
 				86486F252AAD2BE2007E9569 /* Renderer.cc */,
 				86486F282AAD312B007E9569 /* Scene.hh */,
+				867F8BCE2ABA4AFA00417059 /* ShaderTypes.hh */,
 			);
 			path = S13E01;
 			sourceTree = "<group>";
@@ -146,6 +148,7 @@
 				867F8BC12AB5986700417059 /* Scene.hh */,
 				867F8BC32AB5C78700417059 /* Shaders.metal */,
 				867F8BC62AB5CC3900417059 /* Renderer.cc */,
+				867F8BCD2ABA48CD00417059 /* ShaderTypes.hh */,
 			);
 			path = S13E02;
 			sourceTree = "<group>";
@@ -219,7 +222,6 @@
 		86EF0CF42A756EB3008433BD /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				86EF0D012A759C67008433BD /* ShaderTypes.h */,
 				864F65252A7703C50071274B /* Engine.hh */,
 				86486F2D2AADD78E007E9569 /* Input.hh */,
 			);
