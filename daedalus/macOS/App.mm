@@ -3,6 +3,7 @@
 #import <MetalKit/MetalKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <GameController/GameController.h>
+#include <memory>
 #include "../Engine/Engine.hh"
 #include "../Engine/Input.hh"
 #include "../Scenes/S13E01/Scene.hh"
@@ -26,12 +27,12 @@
 
 #pragma mark - ViewController
 #pragma region ViewController {
-
 @interface ViewController : NSViewController
 
 @property (nonatomic, assign) CVDisplayLinkRef displayLink;
 
 @end
+
 
 @implementation ViewController
 {
@@ -39,7 +40,7 @@
     int _currentScene;
     Engine::Renderer *_renderer;
     CFTimeInterval _startTime;
-    Engine::Scene *_scenes[2];
+    std::unique_ptr<Engine::Scene> _scenes[2];
 }
 
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow, const CVTimeStamp *inOutputTime, CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext)
@@ -130,12 +131,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     [super viewDidLoad];
     _view = (MTKView *)self.view;
     
-    
-    // Set up game controller
-//    GCEventViewController *eventViewController = [[GCEventViewController alloc] init];
-//    eventViewController.delegate = self;
-//    [self presentViewControllerAsSheet:eventViewController];
-    
     // Set up graphics device
     _view.device = MTLCreateSystemDefaultDevice();
     _view.preferredFramesPerSecond = 30;
@@ -145,8 +140,8 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     NSMenu *applicationMenu = [[NSApplication sharedApplication] mainMenu];
     NSMenu *scenesMenu = [[applicationMenu itemWithTitle:@"Scenes"] submenu];
     
-    _scenes[0] = new Scenes::S13E01::Scene();
-    _scenes[1] = new Scenes::S13E02::Scene();
+    _scenes[0] = std::make_unique<Scenes::S13E01::Scene>();
+    _scenes[1] = std::make_unique<Scenes::S13E02::Scene>();
     
     NSArray *options = @[@"S13E01", @"S13E02"];
 

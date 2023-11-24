@@ -1,4 +1,5 @@
 #include <simd/simd.h>
+#include <numbers>
 
 #include "Scene.hh"
 #include "ShaderTypes.hh"
@@ -48,6 +49,7 @@ constexpr simd::float3 yellow = {1.0f,1.0f,0.0f};
 } /* namespace colors */
 
 template <size_t N>
+INLINE
 void drawPrimitive(MTL::RenderCommandEncoder* enc,
                    const std::array<simd::float2, N>& vertices,
                    const simd::float3& color,
@@ -59,15 +61,16 @@ void drawPrimitive(MTL::RenderCommandEncoder* enc,
 }
 
 template <size_t N>
+INLINE
 void drawEllipse(MTL::RenderCommandEncoder* enc,
                  const simd::float2& p,
                  const simd::float2& position,
                  const simd::float3& color
                  ) {
     std::array<simd::float2, 2 * N + 1> vertices;
-    const float angleIncrement = 2.0f * M_PI / N;
+    auto angleIncrement = 2.0f * std::numbers::pi_v<float> / N;
     for (auto i = 0; i < N; ++i) {
-        float angle = i * angleIncrement;
+        auto angle = i * angleIncrement;
         vertices[2 * i] = {
             position.x + cosf(angle) * p.x,
             position.y + sinf(angle) * p.y,
@@ -87,10 +90,40 @@ void drawCircle(MTL::RenderCommandEncoder* enc,
     drawEllipse<N>(enc, simd::float2{p, p}, position, color);
 }
 
-enum class PresentationState {
-    Edit,
-    Animation,
+enum class PresentationStateTag: size_t { Edit, Animation };
+
+struct EditStateVars { };
+struct AnimationStateVars { float dt; };
+union PresentationStateVars {
+    EditStateVars edit;
+    AnimationStateVars anim;
 };
+
+struct PresentationState {
+    PresentationStateTag tag;
+    CFTimeInterval enteredT;
+    PresentationStateVars vars;
+};
+
+template<class _T>
+struct object {
+    _T data;
+    simd::float4x4 obj;
+};
+
+const simd::float2 viewport{600, 600};
+const simd::float4x4 clip = simd_float4x4{{
+    {0.02, 0, 0, 0},
+    {0, 0.02, 0, 0},
+    {0, 0, 1.0, 0},
+    {-1, -1, 0, 1.0}
+}};
+const simd::float4x4 defaultCam = simd_float4x4{{
+    {2, 0, 0, 0},
+    {0, 2, 0, 0},
+    {0, 0, 1.0, 0},
+    {0, 0, 0, 1.0}
+}};
 
 struct TCR {
     static constexpr simd::float4 tcr(
@@ -118,10 +151,9 @@ struct TCR {
     float t[N];
     simd::float4 p[N];
     simd::float4 v[N];
-    PresentationState state;
     
     int index(float t) const {
-        for(int i = 0; i < count; i++) {
+        for(auto i = 0; i < count; ++i) {
             if(this->t[i] > t) return i-1;
         }
         return 0;
@@ -158,7 +190,7 @@ struct TCR {
             return {};
         }
         
-        const simd::float4 p_[4]{
+        simd::float4 p_[4]{
             {1,},
             {0,1},
             {0,0,1},
@@ -213,13 +245,13 @@ struct TCR {
                    );
     }
     
-    void onDraw(MTL::RenderCommandEncoder* enc) {
+    void onDraw(MTL::RenderCommandEncoder* enc, const PresentationState& state) {
         if (count == 0) {
             return;
         }
         const int res = 500;
-        const float ts = t[0];
-        const float te = t[count - 1];
+        auto ts = t[0];
+        auto te = t[count - 1];
         
         std::array<simd::float2, res> vertices{};
         for (auto i = 0; i < res; ++i) {
@@ -229,9 +261,29 @@ struct TCR {
         
         drawPrimitive(enc, vertices, Colors::black, MTL::PrimitiveTypeLineStrip);
         
-        for (auto i = 0; i < count; ++i) {
-            drawCircle<20>(enc, 10, p[i].xy, Colors::red);
+        if (state.tag == PresentationStateTag::Edit) {
+            for (auto i = 0; i < count; ++i) {
+                drawCircle<20>(enc, 1, p[i].xy, Colors::red);
+            }
+            return;
         }
+        auto dt = state.vars.anim.dt;
+        auto ct = (float)(CACurrentMediaTime() - state.enteredT);
+        auto t1 = (ct / dt) - floorf(ct / dt);
+        auto t_abs = t[0] + t1 * dt;
+        auto w = weight(t_abs);
+        auto i = index(t_abs);
+
+        for(auto j = 0; j < 4; ++j ){
+            int index = i + j - 1;
+            if(index >= 0 && index < count) {
+                auto color = w[j] < 0 ? simd::float3{0,1,1} : Colors::red;
+                drawCircle<20>(enc, w[j], p[index].xy, color);
+            }
+        }
+
+        auto r = (*this)(t_abs);
+        drawCircle<20>(enc, 1, r.xy, Colors::yellow);
     }
 };
 
@@ -243,10 +295,8 @@ struct Bezier {
     
     void addControlPoint(const simd::float4& px) {
         if(count == N) return;
-        
         p[count] = px;
         count++;
-        
         return;
     }
     float weight(int i, float t) const {
@@ -269,65 +319,42 @@ struct Bezier {
         }
         return result;
     }
-    void onDraw(MTL::RenderCommandEncoder* enc) {
+    void onDraw(MTL::RenderCommandEncoder* enc, const PresentationState& state) {
         if (count == 0) {
             return;
         }
         constexpr size_t res = 500;
         std::array<simd::float2, res> vertices{};
         for (auto i = 0; i < res; ++i) {
-            float t = (float) i / res;
+            auto t = (float) i / res;
             auto p = (*this)(t);
             vertices[i] = p.xy;
         }
         drawPrimitive(enc, vertices, Colors::blue, MTL::PrimitiveTypeLineStrip);
         
-        //float ct = (float)(glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
-        //float t_n = (ct / dt) - floorf(ct / dt);
-        
-        //glColor3f(1,0,0);
+//        float t_n = 0;
+//        if (state.tag == PresentationStateTag::Animation) {
+//            auto dt = state.vars.anim.dt;
+//            auto ct = (float)(CACurrentMediaTime() - state.enteredT);
+//            t_n = (ct / dt) - floorf(ct / dt);
+//        }
         
         for(int i = 0; i < count; i++){
-            float w = 1; //weight(i, t_n);
+            auto w = 1; //weight(i, t_n);
             drawCircle<20>(enc, 1 * w, p[i].xy, Colors::red);
         }
-        
-        //glColor3f(1,1,0);
-        
-        //        float4 r(this->operator()(t_n));
-        //        glColor3f(1,1,0);
-        //        glBegin(GL_POLYGON);
-        //        for(float t = 0; t < 1; t+=0.05f) {
-        //            float x = r.a + cosf(2 * t * M_PI);
-        //            float y = r.b + sinf(2 * t * M_PI);
-        //            glVertex2f(x,y);
-        //        }
-        //        glEnd();
     }
 };
 
-const simd::float2 viewport{600, 600};
-const simd::float4x4 clip = simd_float4x4{{
-    {0.02, 0, 0, 0},
-    {0, 0.02, 0, 0},
-    {0, 0, 1.0, 0},
-    {-1, -1, 0, 1.0}
-}};
-const simd::float4x4 defaultCam = simd_float4x4{{
-    {2, 0, 0, 0},
-    {0, 2, 0, 0},
-    {0, 0, 1.0, 0},
-    {0, 0, 0, 1.0}
-}};
-
+PresentationState state;
+simd::float4x4 cam;
 TCR tcr;
 Bezier bezier;
-PresentationState state;
-CFTimeInterval startT;
-simd::float4x4 cam;
 
-void animate() {
-    
+void copyTCRToBezier() {
+    for(int i = 0; i < tcr.count; ++i) {
+        bezier.addControlPoint(tcr.p[i] - simd::float4{2, 2});
+    }
 }
 
 void moveCamera() {
@@ -343,32 +370,38 @@ void moveCamera() {
 void Scene::onDraw(MTL::RenderCommandEncoder* enc) {
     enc->setVertexBytes(&cam, sizeof(cam), (NS::UInteger)VertexInputIndex::Cam);
     enc->setVertexBytes(&clip, sizeof(clip), (NS::UInteger)VertexInputIndex::Clip);
-    tcr.onDraw(enc);
-    bezier.onDraw(enc);
+    tcr.onDraw(enc, state);
+    bezier.onDraw(enc, state);
 }
 
 void Scene::onInit(CFTimeInterval t) {
-    startT = CACurrentMediaTime();
+    state.enteredT = CACurrentMediaTime();
+    cam = defaultCam;
     tcr = TCR{};
     bezier = Bezier{};
-    bezier.addControlPoint({ 10, 10 });
-    bezier.addControlPoint({ 10, 20 });
-    bezier.addControlPoint({ 20, 20 });
-    bezier.addControlPoint({ 10, 30 });
-    bezier.addControlPoint({ 20, 30 });
-    cam = defaultCam;
 }
 
 void Scene::onMouseClicked(Engine::Input::MouseButton button, Engine::Input::ButtonState buttonState, simd::float2 c) {
     if (button == Engine::Input::MouseButton::Left && buttonState == Engine::Input::ButtonState::Down &&
-        state == PresentationState::Edit) {
-        tcr.addControlPoint(simd::float4{c.x, c.y}, CACurrentMediaTime() - startT);
+        state.tag == PresentationStateTag::Edit) {
+        tcr.addControlPoint(simd::float4{
+            (c.x / 6 - cam.columns[3][0]) / cam.columns[0][0],
+            (c.y / 6 - cam.columns[3][1]) / cam.columns[1][1]
+        }, CACurrentMediaTime() - state.enteredT);
     }
 }
 
-bool Scene::onKey(Engine::Input::KeyboardButton button, Engine::Input::ButtonState state) {
-    if (button == Engine::Input::KeyboardButton::SPACEBAR) {
-        animate();
+bool Scene::onKey(Engine::Input::KeyboardButton button, Engine::Input::ButtonState buttonState) {
+    if (button == Engine::Input::KeyboardButton::SPACEBAR
+        && state.tag == PresentationStateTag::Edit
+        && tcr.count
+        ) {
+        state = PresentationState{
+            .tag=PresentationStateTag::Animation,
+            .enteredT=CACurrentMediaTime()
+        };
+        state.vars.anim = {tcr.t[tcr.count-1] - tcr.t[0]};
+        copyTCRToBezier();
         return true;
     }
     if (button == Engine::Input::KeyboardButton::S) {
