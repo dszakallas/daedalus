@@ -3,12 +3,11 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <QuartzCore/QuartzCore.h>
 #include <MetalKit/MetalKit.hpp>
-#include "../../Utility/AppKitExt.hh"
 #include "../../Engine/Engine.hh"
 #include "../../Engine/Input.hh"
 
 namespace Scenes {
-namespace S13E02 {
+namespace NavigateCube {
 
 struct Scene : public Engine::Scene {
     Engine::Renderer* createRenderer(MTK::View *mtkView) override;
@@ -23,18 +22,35 @@ struct Scene : public Engine::Scene {
 };
 
 struct Renderer : public Engine::Renderer {
-    Renderer(NSExt::ScopedRef<MTL::Device> device, NSExt::ScopedRef<MTL::CommandQueue> q, NSExt::ScopedRef<MTL::RenderPipelineState> state, Scene& scene);
-    static Renderer* createRenderer(MTK::View* mtkView, Scene& scene);
+    Renderer(MTK::View* mtkView, Scene& scene);
     virtual void drawInMTKView(MTK::View* view) override;
     virtual void drawableSizeWillChange(MTK::View* view, CGSize size) override;
     virtual ~Renderer() override;
+    
+    static constexpr size_t kMaxFramesInFlight = 3;
+    static constexpr size_t kInstanceRows = 10;
+    static constexpr size_t kInstanceColumns = 10;
+    static constexpr size_t kInstanceDepth = 10;
+    static constexpr size_t kNumInstances = (kInstanceRows * kInstanceColumns * kInstanceDepth);
 private:
-    NSExt::ScopedRef<MTL::Device> device;
-    NSExt::ScopedRef<MTL::CommandQueue> q;
-    NSExt::ScopedRef<MTL::RenderPipelineState> state;
+    void buildShaders();
+    void buildDepthStencilStates();
+    void buildBuffers();
+    MTL::Device* device;
+    MTL::CommandQueue* q;
+    MTL::RenderPipelineState* state;
+    MTL::Library* library;
+    MTL::DepthStencilState* depthStencilState;
+    MTL::Buffer* vertexDataBuffer;
+    MTL::Buffer* instanceDataBuffers[kMaxFramesInFlight];
+    MTL::Buffer* cameraDataBuffers[kMaxFramesInFlight];
+    MTL::Buffer* indexBuffer;
+    float angle;
+    int frame;
+    dispatch_semaphore_t semaphore;
     simd_uint2 viewport;
     Scene& scene;
 };
 
-} /* namespace S13E02 */
+} /* namespace NavigateCube */
 } /* namespace Scenes */

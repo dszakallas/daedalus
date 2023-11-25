@@ -8,6 +8,7 @@
 #include "../Engine/Input.hh"
 #include "../Scenes/S13E01/Scene.hh"
 #include "../Scenes/S13E02/Scene.hh"
+#include "../Scenes/NavigateCube/Scene.hh"
 
 #pragma mark - AppDelegate
 #pragma region AppDelegate {
@@ -40,7 +41,7 @@
     int _currentScene;
     Engine::Renderer *_renderer;
     CFTimeInterval _startTime;
-    std::unique_ptr<Engine::Scene> _scenes[2];
+    std::unique_ptr<Engine::Scene> _scenes[3];
 }
 
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow, const CVTimeStamp *inOutputTime, CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext)
@@ -142,8 +143,9 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     
     _scenes[0] = std::make_unique<Scenes::S13E01::Scene>();
     _scenes[1] = std::make_unique<Scenes::S13E02::Scene>();
+    _scenes[2] = std::make_unique<Scenes::NavigateCube::Scene>();
     
-    NSArray *options = @[@"S13E01", @"S13E02"];
+    NSArray *options = @[@"S13E01", @"S13E02", @"NavigateCube"];
 
     for (NSString *option in options) {
         NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:option action:@selector(sceneSelected:) keyEquivalent:@""];

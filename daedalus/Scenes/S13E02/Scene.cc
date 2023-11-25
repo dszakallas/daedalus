@@ -417,8 +417,8 @@ void Scene::onMouseMoved(simd::float2 c) {
 void Scene::onIdle(CFTimeInterval endT) {
 }
 
-Engine::Renderer* Scene::createRenderer(MTK::View* mtkView) {
-    return new Renderer(mtkView, *this);
+Engine::Renderer* Scene::createRenderer(MTK::View *mtkView) {
+    return Renderer::createRenderer(mtkView, *this);
 }
 
 } /* namespace S13E02 */
