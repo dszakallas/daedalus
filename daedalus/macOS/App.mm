@@ -39,7 +39,7 @@
 {
     MTKView *_view;
     int _currentScene;
-    Engine::Renderer *_renderer;
+    std::unique_ptr<Engine::Renderer> _renderer;
     CFTimeInterval _startTime;
     std::unique_ptr<Engine::Scene> _scenes[3];
 }
@@ -114,17 +114,17 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     auto view = (__bridge MTK::View*)_view;
     if (_renderer != nullptr) {
         view->setDelegate(nullptr);
-        _renderer->~Renderer();
+        _renderer.reset(nullptr);
     }
     _currentScene = index;
     _scenes[_currentScene]->onInit(CACurrentMediaTime());
     auto *renderer = _scenes[_currentScene]->createRenderer((__bridge MTK::View*)_view);
     NSAssert(renderer, @"Renderer failed initialization");
-    _renderer = renderer;
+    _renderer.reset(renderer);
     
     // Initialize our renderer with the view size
     _renderer->drawableSizeWillChange(view, view->drawableSize());
-    view->setDelegate(_renderer);
+    view->setDelegate(_renderer.get());
 }
 
 - (void)viewDidLoad
@@ -151,7 +151,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
         NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:option action:@selector(sceneSelected:) keyEquivalent:@""];
         [scenesMenu addItem:menuItem];
     }
-    
     // Set up scenes
     [self initializeSceneWithIndex:1];
 }

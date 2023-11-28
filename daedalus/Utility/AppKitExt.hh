@@ -1,5 +1,6 @@
 #pragma once
 
+#include <utility>
 #include <AppKit/AppKit.hpp>
 #include <MetalKit/MetalKit.hpp>
 
@@ -33,63 +34,85 @@ static NS::String* StringWithContentsOfFile(NS::String* fileName, NS::StringEnco
 }
 
 template<class T>
-struct ScopedRef {
-    ScopedRef(const ScopedRef<T>& t): value(t.value) {
-        value->retain();
+struct ns_ptr {
+    constexpr ns_ptr(): value(nullptr) {}
+    constexpr ns_ptr(const ns_ptr<T>& t): value(t.value) { value->retain(); }
+    constexpr ns_ptr(ns_ptr<T>& t): value(t.value) { value->retain(); }
+    constexpr ns_ptr(ns_ptr<T>&& t): value(t.release()) {}
+    
+    // Assumes t->retain() has already been called. You can use retain(t) that calls retain before wrapping.
+    constexpr ns_ptr(T* t) : value(t) {}
+    
+    constexpr ns_ptr<T>& operator=(std::nullptr_t) {
+        reset(nullptr);
+        return *this;
     }
     
-    ScopedRef(ScopedRef<T>& t): value(t.value) {
-        value->retain();
+    constexpr ns_ptr<T>& operator=(const ns_ptr<T>& t) {
+        t.value->retain();
+        reset(t.value);
+        return *this;
+    }
+    
+    constexpr ns_ptr<T>& operator=(ns_ptr<T>& t) {
+        t.value->retain();
+        reset(t.value);
+        return *this;
+    }
+    
+    constexpr ns_ptr<T>& operator=(ns_ptr<T>&& t) {
+        reset(t.release());
+        return *this;
+    }
+    
+    constexpr void reset(T* t) {
+        auto _ret = value;
+        value = t;
+        if (_ret) { _ret->release(); }
+    }
+    
+    // Follows C++ unique_ptr.release() semantics by forfeiting ownership.
+    // Not the same as t.get()->release(), in fact it does not call it!
+    constexpr T* release() {
+        auto _ret = value;
+        value = nullptr;
+        return _ret;
+    }
+    
+    void swap(ns_ptr& t) {
+        std::swap(&t.value, &value);
+    }
+    
+    constexpr T* get() {
+        return value;
     }
     
     constexpr T* operator->() {
         return value;
     }
     
-    constexpr T* operator*() {
-        return value;
-    }
-    
-    ~ScopedRef() {
-        value->release();
+    constexpr std::add_lvalue_reference<T>::type operator*() {
+        return *value;
     }
     
     constexpr bool operator!() {
         return !value;
     }
     
-    T* value;
-    
-    _NS_INLINE
-    static ScopedRef<T> make(T* p) {
-        return ScopedRef<T>(p);
-    }
-    
-    _NS_INLINE
-    static ScopedRef<T> retain(T* p) {
-        p->retain();
-        return ScopedRef<T>(p);
+    ~ns_ptr() {
+        value->release();
     }
     
 private:
-    ScopedRef(T* value) : value(value) {}
+    T* value;
 };
 
 template<class T>
 _NS_INLINE
-static ScopedRef<T> RetainScoped(T* p) {
-    return ScopedRef<T>::retain(p);
+static ns_ptr<T> retain(T* t) {
+    t->retain();
+    return ns_ptr<T>(t);
 }
-
-template<class T>
-_NS_INLINE
-static ScopedRef<T> MakeScoped(T* p) {
-    return ScopedRef<T>::make(p);
-}
-
-
-
-
 
 } /* namespace NSExt */
 

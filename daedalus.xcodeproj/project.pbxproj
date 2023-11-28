@@ -17,6 +17,9 @@
 		867F8BC42AB5C78700417059 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 867F8BC32AB5C78700417059 /* Shaders.metal */; };
 		867F8BC82AB5CC3900417059 /* Renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 867F8BC62AB5CC3900417059 /* Renderer.cc */; };
 		867F8BCA2AB6417000417059 /* Impl.cc in Sources */ = {isa = PBXBuildFile; fileRef = 867F8BC92AB6417000417059 /* Impl.cc */; };
+		869AA0202B115ABE0046FC17 /* Scene.cc in Sources */ = {isa = PBXBuildFile; fileRef = 869AA01F2B115ABE0046FC17 /* Scene.cc */; };
+		869AA0222B115BDD0046FC17 /* Renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 869AA0212B115BDD0046FC17 /* Renderer.cc */; };
+		869AA0242B115CB10046FC17 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 869AA0232B115CB10046FC17 /* Shaders.metal */; };
 		86EF0CC82A6DD4A4008433BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86EF0CC72A6DD4A4008433BD /* Assets.xcassets */; };
 		86EF0CCB2A6DD4A4008433BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 86EF0CC92A6DD4A4008433BD /* Main.storyboard */; };
 		86EF0CCD2A6DD4A4008433BD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 86EF0CCC2A6DD4A4008433BD /* main.m */; };
@@ -67,6 +70,12 @@
 		867F8BCC2AB780DC00417059 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		867F8BCD2ABA48CD00417059 /* ShaderTypes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ShaderTypes.hh; sourceTree = "<group>"; };
 		867F8BCE2ABA4AFA00417059 /* ShaderTypes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ShaderTypes.hh; sourceTree = "<group>"; };
+		869AA01E2B115A6A0046FC17 /* Scene.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Scene.hh; sourceTree = "<group>"; };
+		869AA01F2B115ABE0046FC17 /* Scene.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cc; sourceTree = "<group>"; };
+		869AA0212B115BDD0046FC17 /* Renderer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cc; sourceTree = "<group>"; };
+		869AA0232B115CB10046FC17 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		869AA0252B115CFF0046FC17 /* ShaderTypes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ShaderTypes.hh; sourceTree = "<group>"; };
+		869AA0272B1168960046FC17 /* Math.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Math.hh; sourceTree = "<group>"; };
 		86EF0CBE2A6DD4A3008433BD /* daedalus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = daedalus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86EF0CC72A6DD4A4008433BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		86EF0CCA2A6DD4A4008433BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -126,6 +135,7 @@
 		864BDE582A76C02D005A3A3E /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				869AA01D2B1159490046FC17 /* NavigateCube */,
 				867F8BBF2AB5965800417059 /* S13E02 */,
 				86486F242AAD2B41007E9569 /* S13E01 */,
 			);
@@ -137,6 +147,7 @@
 			children = (
 				864F652C2A7830120071274B /* AppKitExt.hh */,
 				867F8BC92AB6417000417059 /* Impl.cc */,
+				869AA0272B1168960046FC17 /* Math.hh */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -151,6 +162,18 @@
 				867F8BCD2ABA48CD00417059 /* ShaderTypes.hh */,
 			);
 			path = S13E02;
+			sourceTree = "<group>";
+		};
+		869AA01D2B1159490046FC17 /* NavigateCube */ = {
+			isa = PBXGroup;
+			children = (
+				869AA01E2B115A6A0046FC17 /* Scene.hh */,
+				869AA01F2B115ABE0046FC17 /* Scene.cc */,
+				869AA0212B115BDD0046FC17 /* Renderer.cc */,
+				869AA0232B115CB10046FC17 /* Shaders.metal */,
+				869AA0252B115CFF0046FC17 /* ShaderTypes.hh */,
+			);
+			path = NavigateCube;
 			sourceTree = "<group>";
 		};
 		86EF0CB52A6DD4A3008433BD = {
@@ -369,14 +392,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				869AA0242B115CB10046FC17 /* Shaders.metal in Sources */,
 				864BDE572A76AAC8005A3A3E /* Shaders.metal in Sources */,
 				86EF0CFF2A757EB9008433BD /* App.mm in Sources */,
 				867F8BCA2AB6417000417059 /* Impl.cc in Sources */,
 				867F8BC82AB5CC3900417059 /* Renderer.cc in Sources */,
+				869AA0222B115BDD0046FC17 /* Renderer.cc in Sources */,
 				867F8BC42AB5C78700417059 /* Shaders.metal in Sources */,
 				86EF0CCD2A6DD4A4008433BD /* main.m in Sources */,
 				86486F262AAD2BE2007E9569 /* Renderer.cc in Sources */,
 				867F8BC22AB5986700417059 /* Scene.cc in Sources */,
+				869AA0202B115ABE0046FC17 /* Scene.cc in Sources */,
 				864BDE5C2A76C09E005A3A3E /* Scene.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

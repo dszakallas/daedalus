@@ -418,7 +418,7 @@ void Scene::onIdle(CFTimeInterval endT) {
 }
 
 Engine::Renderer* Scene::createRenderer(MTK::View *mtkView) {
-    return Renderer::createRenderer(mtkView, *this);
+    return new Renderer(mtkView, *this);
 }
 
 } /* namespace S13E02 */

@@ -9,63 +9,62 @@
 namespace Scenes {
 namespace S13E02 {
 
-Renderer::Renderer(NSExt::ScopedRef<MTL::Device> device, NSExt::ScopedRef<MTL::CommandQueue> q, NSExt::ScopedRef<MTL::RenderPipelineState> state, Scene& scene)
-: device(device), q(q), state(state), scene(scene) {}
+using namespace NSExt;
 
-Renderer::~Renderer() {}
-
-Renderer* Renderer::createRenderer(MTK::View* mtkView, Scene& scene) {
-    auto device = NSExt::RetainScoped(mtkView->device());
+Renderer::Renderer(MTK::View* mtkView, Scene& scene)
+: scene(scene) {
+    device = retain(mtkView->device());
     NS::Error* err = nullptr;
     
     mtkView->setColorPixelFormat( MTL::PixelFormat::PixelFormatBGRA8Unorm_sRGB );
     mtkView->setClearColor( MTL::ClearColor::Make( 1.0, 1.0, 1.0, 1.0 ) );
     
     // Load all the shader files with a .metal file extension in the project.
-    auto library = NSExt::MakeScoped(device->newDefaultLibrary());
+    auto library = ns_ptr(device->newDefaultLibrary());
     
     if ( !library ) {
         __builtin_printf( "%s", err->localizedDescription()->utf8String() );
         assert( false );
     }
     
-    auto vertexShader = NSExt::MakeScoped(library->newFunction(NSExt::UTF8String("Scenes::S13E02::vertexShader")));
-    auto fragmentShader = NSExt::MakeScoped(library->newFunction(NSExt::UTF8String("Scenes::S13E02::fragmentShader")));
+    auto vertexShader = ns_ptr(library->newFunction(NSExt::UTF8String("Scenes::S13E02::vertexShader")));
+    auto fragmentShader = ns_ptr(library->newFunction(NSExt::UTF8String("Scenes::S13E02::fragmentShader")));
     
-    auto desc = NSExt::MakeScoped(MTL::RenderPipelineDescriptor::alloc()->init());
+    auto desc = ns_ptr(MTL::RenderPipelineDescriptor::alloc()->init());
     
-    desc->setVertexFunction(*vertexShader);
-    desc->setFragmentFunction(*fragmentShader);
+    desc->setVertexFunction(vertexShader.get());
+    desc->setFragmentFunction(fragmentShader.get());
     desc->colorAttachments()->object(0)->setPixelFormat(mtkView->colorPixelFormat());
 
-    auto state = NSExt::MakeScoped(device->newRenderPipelineState(*desc, &err));
+    state = ns_ptr(device->newRenderPipelineState(desc.get(), &err));
     if ( !state )
     {
         __builtin_printf( "%s", err->localizedDescription()->utf8String() );
         assert( false );
     }
 
-    auto q = NSExt::MakeScoped(device->newCommandQueue());
-    return new Renderer(device, q, state, scene);
+    q = ns_ptr(device->newCommandQueue());
 }
+
+Renderer::~Renderer() {}
 
 void Renderer::drawInMTKView(MTK::View* view) {
     auto pool = NS::AutoreleasePool::alloc()->init();
     
     auto cmdBuffer = q->commandBuffer();
-    cmdBuffer->setLabel(NSExt::UTF8String("MyCommand"));
+    cmdBuffer->setLabel(UTF8String("MyCommand"));
     auto renderPassDesc = view->currentRenderPassDescriptor();
     
     if (renderPassDesc != nullptr) {
         auto enc = cmdBuffer->renderCommandEncoder(renderPassDesc);
-        enc->setLabel(NSExt::UTF8String("MyRenderEncoder"));
+        enc->setLabel(UTF8String("MyRenderEncoder"));
         enc->setViewport(MTL::Viewport{
             .width=(double)viewport.x,
             .height=(double)viewport.y,
             .zfar=1.0
         });
         
-        enc->setRenderPipelineState(*state);
+        enc->setRenderPipelineState(state.get());
         
         scene.onDraw(enc);
         

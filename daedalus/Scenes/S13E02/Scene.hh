@@ -23,15 +23,14 @@ struct Scene : public Engine::Scene {
 };
 
 struct Renderer : public Engine::Renderer {
-    Renderer(NSExt::ScopedRef<MTL::Device> device, NSExt::ScopedRef<MTL::CommandQueue> q, NSExt::ScopedRef<MTL::RenderPipelineState> state, Scene& scene);
-    static Renderer* createRenderer(MTK::View* mtkView, Scene& scene);
+    Renderer(MTK::View* mtkView, Scene& scene);
     virtual void drawInMTKView(MTK::View* view) override;
     virtual void drawableSizeWillChange(MTK::View* view, CGSize size) override;
     virtual ~Renderer() override;
 private:
-    NSExt::ScopedRef<MTL::Device> device;
-    NSExt::ScopedRef<MTL::CommandQueue> q;
-    NSExt::ScopedRef<MTL::RenderPipelineState> state;
+    NSExt::ns_ptr<MTL::Device> device;
+    NSExt::ns_ptr<MTL::CommandQueue> q;
+    NSExt::ns_ptr<MTL::RenderPipelineState> state;
     simd_uint2 viewport;
     Scene& scene;
 };

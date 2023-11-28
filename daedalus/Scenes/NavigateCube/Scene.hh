@@ -3,11 +3,14 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <QuartzCore/QuartzCore.h>
 #include <MetalKit/MetalKit.hpp>
+#include "../../Utility/AppKitExt.hh"
 #include "../../Engine/Engine.hh"
 #include "../../Engine/Input.hh"
 
 namespace Scenes {
 namespace NavigateCube {
+
+using namespace NSExt;
 
 struct Scene : public Engine::Scene {
     Engine::Renderer* createRenderer(MTK::View *mtkView) override;
@@ -36,15 +39,15 @@ private:
     void buildShaders();
     void buildDepthStencilStates();
     void buildBuffers();
-    MTL::Device* device;
-    MTL::CommandQueue* q;
-    MTL::RenderPipelineState* state;
-    MTL::Library* library;
-    MTL::DepthStencilState* depthStencilState;
-    MTL::Buffer* vertexDataBuffer;
-    MTL::Buffer* instanceDataBuffers[kMaxFramesInFlight];
-    MTL::Buffer* cameraDataBuffers[kMaxFramesInFlight];
-    MTL::Buffer* indexBuffer;
+    ns_ptr<MTL::Device> device;
+    ns_ptr<MTL::CommandQueue> q;
+    ns_ptr<MTL::RenderPipelineState> state;
+    ns_ptr<MTL::Library> library;
+    ns_ptr<MTL::DepthStencilState> depthStencilState;
+    ns_ptr<MTL::Buffer> vertexDataBuffer;
+    ns_ptr<MTL::Buffer> instanceDataBuffers[kMaxFramesInFlight];
+    ns_ptr<MTL::Buffer> cameraDataBuffers[kMaxFramesInFlight];
+    ns_ptr<MTL::Buffer> indexBuffer;
     float angle;
     int frame;
     dispatch_semaphore_t semaphore;
